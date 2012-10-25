@@ -1,3 +1,3 @@
 ARCH=arm CROSS_COMPILE=/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi- make miui_phoenix_defconfig
 #ARCH=arm CROSS_COMPILE=/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-4.4.3/bin/arm-eabi- make miui_phoenix_defconfig
-cp -r -f ./ramdisk_configs/phoenix ./ramdisk
+cp -r -f ./ramdisk_configs/phoenix/* ./ramdisk
