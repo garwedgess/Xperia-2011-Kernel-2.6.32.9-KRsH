@@ -1,0 +1,39 @@
+#!/bin/bash
+
+rm ramdisk/modules/bcm4329.ko
+echo "  Building wl12xx..."
+export TOPDIR=$(cd $(dirname "$0"); pwd)
+export HOME=$TOPDIR/..
+export TOOLCHAINS=$HOME/android_prebuilt_toolchains
+export ARCH=arm 
+export CROSS_COMPILE=$TOOLCHAINS/arm-eabi-linaro-4.7/bin/arm-eabi-
+export KLIB=$HOME/Xperia-2011-Kernel-2.6.32.9-KRsH
+export KLIB_BUILD=$KLIB
+cd compat-wireless-wl12xx/
+./scripts/driver-select wl12xx
+#ARCH=arm CROSS_COMPILE=/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi- make -j4
+make
+cp -f ./net/wireless/cfg80211.ko ../modules_wl12xx/net/wireless/.
+cp -f ./net/mac80211/mac80211.ko ../modules_wl12xx/net/mac80211/.
+cp -f ./compat/compat.ko ../modules_wl12xx/compat/.
+cp -f ./compat/compat_firmware_class.ko ../modules_wl12xx/compat/.
+cp -f ./drivers/net/wireless/wl12xx/wl12xx.ko ../modules_wl12xx/drivers/net/wireless/wl12xx/.
+cp -f ./drivers/net/wireless/wl12xx/wl12xx_sdio.ko ../modules_wl12xx/drivers/net/wireless/wl12xx/.
+cp -f ./drivers/net/wireless/wl12xx/wl12xx_spi.ko ../modules_wl12xx/drivers/net/wireless/wl12xx/.
+make clean
+cd ..
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/net/wireless/cfg80211.ko
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/net/mac80211/mac80211.ko
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/compat/compat.ko
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/compat/compat_firmware_class.ko
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/drivers/net/wireless/wl12xx/wl12xx.ko
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/drivers/net/wireless/wl12xx/wl12xx_sdio.ko
+/home/cosmicdan/android/android_prebuilt_toolchains/arm-eabi-linaro-4.7/bin/arm-eabi-strip --strip-debug ./modules_wl12xx/drivers/net/wireless/wl12xx/wl12xx_spi.ko
+cd ramdisk
+find . | cpio -o -H newc | gzip > ../ramdisk.img
+cd ..
+#./mkbootimg --base 0x00200000 --kernel ./arch/arm/boot/zImage --ramdisk ramdisk.img -o boot.img
+./mkbootimg --base 0x00200000 --kernel ./arch/arm/boot/Image --ramdisk ramdisk.img -o boot.img
+rm ramdisk.img
+echo "  boot.img ready"
+echo "  Remember to move modules_wl12xx to ROM (autowifi not supported)!"
