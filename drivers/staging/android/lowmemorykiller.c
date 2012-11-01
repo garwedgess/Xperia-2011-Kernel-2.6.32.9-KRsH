@@ -63,7 +63,7 @@ static int lowmem_minfree_size = 4;
 static struct task_struct *lowmem_deathpending;
 static unsigned long lowmem_deathpending_timeout;
 #ifdef CONFIG_SWAP
-static int fudgeswap = 512;
+static int fudgeswap = 0;
 #endif
 
 extern int compact_nodes();
@@ -103,7 +103,7 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	int selected_tasksize = 0;
 	int selected_oom_adj;
 	int array_size = ARRAY_SIZE(lowmem_adj);
-	int other_free = global_page_state(NR_FREE_PAGES);
+	int other_free = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
 #ifdef SEC_ADJUST_LMK
 	int other_file = global_page_state(NR_INACTIVE_FILE) +
 						global_page_state(NR_ACTIVE_FILE);
