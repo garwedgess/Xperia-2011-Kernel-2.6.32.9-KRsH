@@ -66,8 +66,6 @@ static unsigned long lowmem_deathpending_timeout;
 static int fudgeswap = 0;
 #endif
 
-extern int compact_nodes();
-
 #define lowmem_print(level, x...)			\
 	do {						\
 		if (lowmem_debug_level >= (level))	\
@@ -239,8 +237,6 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	lowmem_print(4, "lowmem_shrink %d, %x, return %d\n",
 		     nr_to_scan, gfp_mask, rem);
 	read_unlock(&tasklist_lock);
-    if (selected)
-        compact_nodes();
 	return rem;
 }
 
