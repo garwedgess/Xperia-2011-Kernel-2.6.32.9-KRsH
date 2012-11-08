@@ -5,6 +5,14 @@ then
   /sbin/bootrec-device
 fi
 
+# init.rc sucks, let's do the dalvik-cache here instead
+mkdir /data/dalvik-cache 0771 system system
+chown system system /data/dalvik-cache
+chmod 0771 /data/dalvik-cache
+ln -s /data/dalvik-cache /cache/dalvik-cache
+chown system system /cache/dalvik-cache
+chmod 0771 /cache/dalvik-cache
+
 if [ -s /dev/keycheck -o -e /cache/recovery/boot ]
 then
   echo 0 > /sys/class/android_usb/android0/enable

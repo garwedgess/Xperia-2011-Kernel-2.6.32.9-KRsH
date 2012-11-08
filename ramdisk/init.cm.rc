@@ -6,9 +6,10 @@ on init
     export TERM linux
 
 on post-fs-data
-    mkdir /cache/dalvik-cache 0771 system system
-    chown system system /cache/dalvik-cache
-    chmod 0771 /cache/dalvik-cache
+    # CosmicDan (let init.rc handle this)
+    #mkdir /cache/dalvik-cache 0771 system system
+    #chown system system /cache/dalvik-cache
+    #chmod 0771 /cache/dalvik-cache
 
 on boot
     chown system system /sys/block/mmcblk0/queue/scheduler
