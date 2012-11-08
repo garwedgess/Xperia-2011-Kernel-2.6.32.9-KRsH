@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2009-2012, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -141,8 +141,11 @@ enum {
 /* 2 VG pipes can be shared by RGB and VIDEO */
 #define MDP4_MAX_PIPE 	(OVERLAY_PIPE_MAX + 2)
 
-#define OVERLAY_TYPE_RGB	0x01
-#define	OVERLAY_TYPE_VIDEO	0x02
+enum {
+	OVERLAY_TYPE_RGB,
+	OVERLAY_TYPE_VIDEO,
+	OVERLAY_TYPE_BF,
+};
 
 enum {
 	MDP4_MIXER0,
@@ -163,10 +166,9 @@ enum {
 	MDP4_MIXER_STAGE_BASE,
 	MDP4_MIXER_STAGE0,	/* zorder 0 */
 	MDP4_MIXER_STAGE1,	/* zorder 1 */
-	MDP4_MIXER_STAGE2	/* zorder 2 */
+	MDP4_MIXER_STAGE2,	/* zorder 2 */
+	MDP4_MIXER_STAGE_MAX
 };
-
-#define MDP4_MAX_STAGE	4
 
 enum {
 	MDP4_FRAME_FORMAT_LINEAR,
@@ -364,6 +366,41 @@ uint32 mdp4_overlay_format(struct mdp4_overlay_pipe *pipe);
 uint32 mdp4_overlay_unpack_pattern(struct mdp4_overlay_pipe *pipe);
 uint32 mdp4_overlay_op_mode(struct mdp4_overlay_pipe *pipe);
 void mdp4_lcdc_overlay(struct msm_fb_data_type *mfd);
+void mdp4_overlay_dtv_ov_done_push(struct msm_fb_data_type *mfd,
+			struct mdp4_overlay_pipe *pipe);
+#ifdef CONFIG_FB_MSM_DTV
+void mdp4_overlay_dtv_vsync_push(struct msm_fb_data_type *mfd,
+			struct mdp4_overlay_pipe *pipe);
+#else
+static inline void mdp4_overlay_dtv_vsync_push(struct msm_fb_data_type *mfd,
+				struct mdp4_overlay_pipe *pipe)
+{
+	/* empty */
+}
+#endif
+
+#ifdef CONFIG_FB_MSM_HDMI_AS_PRIMARY
+void mdp4_dtv_set_black_screen(void);
+#else
+static inline void mdp4_dtv_set_black_screen(void)
+{
+    /* empty */
+}
+#endif
+
+static inline int mdp4_overlay_borderfill_supported(void)
+{
+	unsigned int mdp_hw_version;
+	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
+	mdp_hw_version = inpdw(MDP_BASE + 0x0); /* MDP_HW_VERSION */
+	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_OFF, FALSE);
+	return (mdp_hw_version >= 0x0402030b);
+}
+
+int mdp4_overlay_dtv_set(struct msm_fb_data_type *mfd,
+			struct mdp4_overlay_pipe *pipe);
+int mdp4_overlay_dtv_unset(struct msm_fb_data_type *mfd,
+			struct mdp4_overlay_pipe *pipe);
 void mdp4_dtv_overlay(struct msm_fb_data_type *mfd);
 int mdp4_dtv_on(struct platform_device *pdev);
 int mdp4_dtv_off(struct platform_device *pdev);
@@ -439,6 +476,8 @@ void mdp4_mddi_kickoff_video(struct msm_fb_data_type *mfd,
                                 struct mdp4_overlay_pipe *pipe);
 
 void mdp4_mddi_read_ptr_intr(void);
+
+int mdp4_mixer_info(int mixer_num, struct mdp_mixer_info *info);
 
 void mdp_dmap_vsync_set(int enable);
 int mdp_dmap_vsync_get(void);

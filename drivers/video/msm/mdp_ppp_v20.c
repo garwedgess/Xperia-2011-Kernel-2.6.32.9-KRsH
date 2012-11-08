@@ -1,4 +1,4 @@
-/* Copyright (c) 2008-2009, 2012 Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1630,7 +1630,6 @@ static int mdp_get_edge_cond(MDPIBUF *iBuf, uint32 *dup, uint32 *dup2)
 		 * offsite in vertical axis
 		 */
 	case MDP_Y_CBCR_H2V2:
-	case MDP_Y_CBCR_H2V2_ADRENO:
 	case MDP_Y_CRCB_H2V2:
 		/* floor( luma_interp_point_left / 2) */
 		chroma_interp_point_left = luma_interp_point_left >> 1;
@@ -1684,7 +1683,6 @@ static int mdp_get_edge_cond(MDPIBUF *iBuf, uint32 *dup, uint32 *dup2)
 			break;
 
 		case MDP_Y_CBCR_H2V2:
-		case MDP_Y_CBCR_H2V2_ADRENO:
 		case MDP_Y_CRCB_H2V2:
 			/*
 			 * cosite in horizontal dir, and offsite in vertical dir
@@ -2182,26 +2180,8 @@ void mdp_set_scale(MDPIBUF *iBuf,
 			*pppop_reg_ptr |=
 			    (PPP_OP_SCALE_Y_ON | PPP_OP_SCALE_X_ON);
 
-		/* let's use SHIM logic to calculate the partial ROI scaling */
-#if 0
-			phasex_step =
-			    (uint32) mdp_do_div(0x20000000 * iBuf->roi.width,
-						dst_roi_width_scale);
-			phasey_step =
-			    (uint32) mdp_do_div(0x20000000 * iBuf->roi.height,
-						dst_roi_height_scale);
-
-/*
-    phasex_step= ((long long) iBuf->roi.width * 0x20000000)/dst_roi_width_scale;
-    phasey_step= ((long long)iBuf->roi.height * 0x20000000)/dst_roi_height_scale;
-*/
-
-			phasex_init =
-			    (((long long)phasex_step - 0x20000000) >> 1);
-			phasey_init =
-			    (((long long)phasey_step - 0x20000000) >> 1);
-
-#else
+			/* let's use SHIM logic to calculate the
+			   partial ROI scaling */
 			mdp_calc_scale_params(iBuf->roi.x, iBuf->roi.width,
 					      dst_roi_width_scale, 1,
 					      &phasex_init, &phasex_step,
@@ -2210,7 +2190,6 @@ void mdp_set_scale(MDPIBUF *iBuf,
 					      dst_roi_height_scale, 0,
 					      &phasey_init, &phasey_step,
 					      &dummy, &dummy);
-#endif
 			MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x013c,
 				 phasex_init);
 			MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0140,

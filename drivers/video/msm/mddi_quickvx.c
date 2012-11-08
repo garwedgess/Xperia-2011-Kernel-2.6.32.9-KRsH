@@ -1,4 +1,4 @@
-/* Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2010, 2012 Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -685,6 +685,7 @@ static int __init mddi_quickvx_lcd_init(void)
 		pinfo = &mddi_quickvx_panel_data0.panel_info;
 		pinfo->xres = 480;
 		pinfo->yres = 864;
+		MSM_FB_SINGLE_MODE_PANEL(pinfo);
 		pinfo->type = MDDI_PANEL;
 		pinfo->pdest = DISPLAY_1;
 		pinfo->mddi.vdopkt = MDDI_DEFAULT_PRIM_PIX_ATTR;
@@ -699,6 +700,7 @@ static int __init mddi_quickvx_lcd_init(void)
 		pinfo->lcd.vsync_enable = TRUE;
 		pinfo->lcd.refx100 = (mddi_quickvx_rows_per_second \
 			* 100)/mddi_quickvx_rows_per_refresh;
+		pinfo->mddi.is_type1 = TRUE;
 		pinfo->lcd.v_back_porch = 4;
 		pinfo->lcd.v_front_porch = 2;
 		pinfo->lcd.v_pulse_width = 2;
