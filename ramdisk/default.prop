@@ -9,5 +9,5 @@ persist.sys.usb.config=mass_storage,adb
 #
 # VERSION_PROPERTIES
 #
-ro.semc.product.device=LT18
+ro.semc.product.device=R800
 
