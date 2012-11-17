@@ -19,13 +19,13 @@ then
 else
     MIUI_VER_CURRENT=$(grep -F "ro.build.version.incremental=" /system/build.prop | sed 's/ro\.build\.version\.incremental=//g')    
     cd /sdcard/Download
-    MIUI_VER_NEW=$MIUI_VER_CURRENT
+    #MIUI_VER_NEW=$MIUI_VER_CURRENT
     for MIUI_VER_NEW in `ls -1 miuiaustralia_semc-*_update.zip`
     do
-        MIUI_VER_NEW_FILE="/sdcard/Download/$MIUI_VER_NEW"
         MIUI_VER_NEW=$(echo $MIUI_VER_NEW | sed 's/miuiaustralia_semc-//g;s/_update\.zip//g')
+        MIUI_VER_NEW_FILE="/sdcard/Download/miuiaustralia_semc-"$MIUI_VER_NEW"_update.zip"
     done
-    if [ `/res/aromapreinstall/updatecomp.sh $MIUI_VER_CURRENT $MIUI_VER_NEW`==2 ] && [ -e "$MIUI_VER_NEW_FILE" ]
+    if [ `/res/aromapreinstall/updatecomp.sh $MIUI_VER_CURRENT $MIUI_VER_NEW` -eq 2 ]
     then
         echo "update="$MIUI_VER_NEW_FILE > /cache/update.prop
         echo "version="$MIUI_VER_NEW >> /cache/update.prop
