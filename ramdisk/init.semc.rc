@@ -13,7 +13,7 @@ on post-fs-data
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     chmod 0660 /data/misc/wifi/wpa_supplicant.conf
     chown wifi.wifi /data/misc/wifi/wpa_supplicant.conf
-    ln -s /data/misc/wifi/wlan0 /data/system/wpa_supplicant
+    symlink /data/misc/wifi/wlan0 /data/system/wpa_supplicant
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
 
