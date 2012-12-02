@@ -15,10 +15,12 @@ makeimage()
         IMGSIZE=`cat /proc/partitions | grep mtdblock0 | awk '{print $3}'`
         dd if=/dev/zero of=/sdcard/system$2.ext2.img bs=1K count=$IMGSIZE > /cache/multiboot.log
         mke2fs -b 1024 -I 128 -m 0 -F -E resize=$(( IMGSIZE * 2 )) /sdcard/system$2.ext2.img > /cache/multiboot.log
+        tune2fs -C 1 -m 0 -f /sdcard/system$2.ext2.img > /cache/multiboot.log
     elif [ "$3" == "userdata" ]; then
         IMGSIZE=`cat /proc/partitions | grep mtdblock1 | awk '{print $3}'`
         dd if=/dev/zero of=/sdcard/userdata$2.ext2.img bs=1K count=$IMGSIZE > /cache/multiboot.log
         mke2fs -b 1024 -I 128 -m 0 -F -E resize=$(( IMGSIZE * 2 )) /sdcard/userdata$2.ext2.img > /cache/multiboot.log
+        tune2fs -C 1 -m 0 -f /sdcard/userdata$2.ext2.img > /cache/multiboot.log
     fi
 }
 
