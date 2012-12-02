@@ -29,6 +29,13 @@ static DEFINE_SPINLOCK(clocks_lock);
 static LIST_HEAD(clocks);
 
 /*
+ * Bitmap of enabled clocks, excluding ACPU which is always
+ * enabled
+ */
+static DECLARE_BITMAP(clock_map_enabled, MAX_NR_CLKS);
+static DEFINE_SPINLOCK(clock_map_lock);
+
+/*
  * Standard clock functions defined in include/linux/clk.h
  */
 
@@ -72,6 +79,10 @@ int clk_enable(struct clk *clk)
 		ret = clk->ops->enable(clk->id);
 		if (ret)
 			goto out;
+		BUG_ON(clk->id >= MAX_NR_CLKS);
+		spin_lock(&clock_map_lock);
+		clock_map_enabled[BIT_WORD(clk->id)] |= BIT_MASK(clk->id);
+		spin_unlock(&clock_map_lock);
 	}
 	clk->count++;
 out:
@@ -88,6 +99,9 @@ void clk_disable(struct clk *clk)
 	clk->count--;
 	if (clk->count == 0) {
 		clk->ops->disable(clk->id);
+		spin_lock(&clock_map_lock);
+		clock_map_enabled[BIT_WORD(clk->id)] &= ~BIT_MASK(clk->id);
+		spin_unlock(&clock_map_lock);
 	}
 	spin_unlock_irqrestore(&clocks_lock, flags);
 }
