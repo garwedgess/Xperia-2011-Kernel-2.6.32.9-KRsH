@@ -165,6 +165,11 @@ ln -s /data/dalvik-cache /cache/dalvik-cache
     chown system:system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
 
+# Fix native app2sd
+mount -o remount,rw rootfs /    
+    
+    
 #continue booting
+
 
 
