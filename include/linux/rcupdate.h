@@ -41,7 +41,6 @@
 #include <linux/lockdep.h>
 #include <linux/completion.h>
 
-<<<<<<< HEAD
 /**
  * struct rcu_head - callback structure for use with RCU
  * @next: next update requests in a list
@@ -52,8 +51,6 @@ struct rcu_head {
 	void (*func)(struct rcu_head *head);
 };
 
-=======
->>>>>>> 4d56336... Added Tiny RCU
 /* Exported common interfaces */
 #ifdef CONFIG_TREE_PREEMPT_RCU
 extern void synchronize_rcu(void);
