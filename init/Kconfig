@@ -1084,15 +1084,9 @@ config SLUB
 	   a slab allocator.
 
 config SLQB
-<<<<<<< HEAD
 	bool "SLQB (Queued allocator)"
 	help
 	   SLQB is a proposed new slab allocator.
-=======
- 	bool "SLQB (Queued allocator)"
- 	help
- 	   SLQB is a proposed new slab allocator.
->>>>>>> 4d56336... Added Tiny RCU
 
 config SLOB
 	depends on EMBEDDED
